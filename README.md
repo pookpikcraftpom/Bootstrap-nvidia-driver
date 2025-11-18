@@ -14,6 +14,8 @@
 wget -qO - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sed 's/\r$//' | sudo bash
 
 
+
+ถ้าค้างใช้ command ด้านล่าง
 wget https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh
 
 chmod +x bootstrap.sh
@@ -25,3 +27,4 @@ sudo apt install dos2unix
 dos2unix bootstrap.sh
 
 sudo ./bootstrap.sh
+
