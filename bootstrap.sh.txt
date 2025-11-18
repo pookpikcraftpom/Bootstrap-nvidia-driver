@@ -41,24 +41,39 @@ if [ "$EXPIRED" = true ]; then
 fi
 
 ### ------------------------------------------------
-### 2) Offline NVIDIA Driver Install
+### 2) Download & Install NVIDIA Driver
 ### ------------------------------------------------
-echo "[2/3] Installing NVIDIA driver (OFFLINE MODE)"
+echo "[2/3] Checking/Downloading NVIDIA driver"
 
+# --- START: แก้ไขส่วนนี้เพื่อใช้ WGET ---
+
+# 1. กำหนด URL และชื่อไฟล์
+DRIVER_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64/580.105.08/NVIDIA-Linux-x86_64-580.105.08.run"
+DRIVER_FILE="NVIDIA-Linux-x86_64-580.105.08.run"
 INSTALLER_DIR="./offline-nvidia-driver"
-NVIDIA_RUN=$(ls $INSTALLER_DIR/*.run 2>/dev/null | head -1)
+NVIDIA_RUN="$INSTALLER_DIR/$DRIVER_FILE"
 
+# 2. สร้างโฟลเดอร์ ถ้ายังไม่มี
+sudo mkdir -p "$INSTALLER_DIR"
+
+# 3. ตรวจสอบว่ามีไฟล์ไดรเวอร์หรือยัง ถ้าไม่มี ให้ดาวน์โหลด
 if [ ! -f "$NVIDIA_RUN" ]; then
-    echo "❌ ERROR: No NVIDIA .run installer found in:"
-    echo "   $INSTALLER_DIR/"
-    echo "→ Please download driver from NVIDIA website and place it here."
-    exit 1
+    echo "→ Driver not found locally. Downloading with wget..."
+    # ใช้ wget ดาวน์โหลดไฟล์มาเก็บตามที่กำหนด (NVIDIA_RUN)
+    sudo wget -O "$NVIDIA_RUN" "$DRIVER_URL"
+    echo "✔ Download complete."
+else
+    echo "→ Found local driver. Skipping download."
 fi
 
-echo "→ Found installer:"
+# --- END: จบส่วนที่แก้ไข ---
+
+
+echo "→ Installer path set to:"
 echo "   $NVIDIA_RUN"
 
-chmod +x "$NVIDIA_RUN"
+# (โค้ดที่เหลือจากสคริปต์เดิม)
+sudo chmod +x "$NVIDIA_RUN"
 
 echo "→ Running installer (silent mode)..."
 sudo sh "$NVIDIA_RUN" --silent --no-nouveau-check --no-cc-version-check
