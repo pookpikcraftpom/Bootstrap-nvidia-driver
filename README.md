@@ -11,8 +11,7 @@
 
 ## 📁 โครงสร้างไฟล์
 
+wget -qO - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sed 's/\r$//' | sudo bash
 
-
-wget -O - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sudo bash
 
 
