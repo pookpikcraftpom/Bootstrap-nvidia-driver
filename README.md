@@ -13,6 +13,6 @@
 
 
 
-chmod +x bootstrap.sh
+wget -O - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sudo bash
 
-sudo ./bootstrap.sh
+
