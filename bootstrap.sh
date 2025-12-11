@@ -1,3 +1,4 @@
+code
 #!/bin/bash
 set -e
 
@@ -6,102 +7,83 @@ echo " BOOTSTRAP NVIDIA DRIVER + ROS KEY FIX"
 echo "=========================================="
 
 ### ------------------------------------------------
-### 0) Pre-check: ต้องรันเป็น root
+### 1) Check & Fix ROS key if expired
 ### ------------------------------------------------
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root."
-    exit 1
-fi
-
-### ------------------------------------------------
-### 1) Check & Fix ROS key
-### ------------------------------------------------
-echo "[1/4] Checking ROS key..."
+echo "[1/3] Checking ROS key..."
 
 ROS_KEY_ID="F42ED6FBAB17C654"
 ROS_KEY_PATH="/usr/share/keyrings/ros-archive-keyring.gpg"
 ROS_LIST_FILE="/etc/apt/sources.list.d/ros-latest.list"
 
+EXPIRED=false
+
+# Run apt update first (check expiry)
 apt update --allow-releaseinfo-change > /tmp/ros_update_check.txt 2>&1 || true
 
 if grep -q "EXPKEYSIG $ROS_KEY_ID" /tmp/ros_update_check.txt; then
-    echo "→ ROS key expired, fixing..."
-    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-        -o "$ROS_KEY_PATH"
-    echo "deb [signed-by=$ROS_KEY_PATH] http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" \
-        > "$ROS_LIST_FILE"
-    echo "✔ ROS key fixed"
+    echo "❌ ROS key expired!"
+    EXPIRED=true
 else
-    echo "✔ ROS key valid"
+    echo "✔ ROS key valid (not expired)"
 fi
 
+if [ "$EXPIRED" = true ]; then
+    echo "→ Fixing ROS key ..."
+    apt-key del "$ROS_KEY_ID" 2>/dev/null || true
+
+    curl -sSL "https://raw.githubusercontent.com/ros/rosdistro/master/ros.key" \
+        -o "$ROS_KEY_PATH"
+
+    bash -c "echo \
+    'deb [signed-by=$ROS_KEY_PATH] http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main' \
+    > $ROS_LIST_FILE"
+
+    echo "✔ ROS key updated"
+fi
 
 ### ------------------------------------------------
-### 2) NVIDIA driver install (safe mode)
+### 2) Download & Install NVIDIA Driver
 ### ------------------------------------------------
-echo "[2/4] Preparing NVIDIA installation..."
+echo "[2/3] Checking/Downloading NVIDIA driver"
 
-# 2.1 install kernel headers
-apt install -y linux-headers-$(uname -r)
-
-# 2.2 blacklist nouveau
-cat <<EOF > /etc/modprobe.d/blacklist-nouveau.conf
-blacklist nouveau
-options nouveau modeset=0
-EOF
-
-update-initramfs -u
-
-# 2.3 Stop GUI
-echo "→ Stopping display manager..."
-systemctl stop gdm 2>/dev/null || true
-systemctl stop lightdm 2>/dev/null || true
-systemctl stop sddm 2>/dev/null || true
-
-sleep 2
-
-# 2.4 Download driver if missing
 DRIVER_URL="https://us.download.nvidia.com/XFree86/Linux-x86_64/580.105.08/NVIDIA-Linux-x86_64-580.105.08.run"
+DRIVER_FILE="NVIDIA-Linux-x86_64-580.105.08.run"
 INSTALLER_DIR="./offline-nvidia-driver"
-DRIVER="$INSTALLER_DIR/NVIDIA-Linux-x86_64-580.105.08.run"
+NVIDIA_RUN="$INSTALLER_DIR/$DRIVER_FILE"
 
-mkdir -p $INSTALLER_DIR
+# สร้างโฟลเดอร์ (ไม่ใช้ sudo เพราะสคริปต์รันด้วย sudo อยู่แล้ว)
+mkdir -p "$INSTALLER_DIR"
 
-if [ ! -f "$DRIVER" ]; then
-    echo "→ Downloading NVIDIA driver..."
-    wget -O "$DRIVER" "$DRIVER_URL"
+if [ ! -f "$NVIDIA_RUN" ]; then
+    echo "→ Driver not found locally. Downloading with wget..."
+    # ใช้ wget (ไม่ใช้ sudo)
+    wget -O "$NVIDIA_RUN" "$DRIVER_URL"
+    echo "✔ Download complete."
+else
+    echo "→ Found local driver. Skipping download."
 fi
 
-chmod +x "$DRIVER"
+echo "→ Installer path set to:"
+echo "   $NVIDIA_RUN"
 
-# 2.5 RUN INSTALLER
-echo "→ Installing NVIDIA driver... (this may take a few minutes)"
+# ให้สิทธิ์ (ไม่ใช้ sudo)
+chmod +x "$NVIDIA_RUN"
 
-sh "$DRIVER" \
-    --silent \
-    --no-nouveau-check \
-    --no-cc-version-check \
-    --disable-nouveau \
-    --no-x-check
+echo "→ Running installer (silent mode)..."
+# รันตัวติดตั้ง (ไม่ใช้ sudo)
+sh "$NVIDIA_RUN" --silent --no-nouveau-check --no-cc-version-check
 
-echo "✔ NVIDIA driver installed"
+echo "✔ NVIDIA driver installed successfully."
 
 
 ### ------------------------------------------------
-### 3) Restart GUI
+### 3) Final apt update
 ### ------------------------------------------------
-echo "[3/4] Restarting GUI..."
-systemctl start gdm 2>/dev/null || true
-systemctl start lightdm 2>/dev/null || true
-systemctl start sddm 2>/dev/null || true
-
-
-### ------------------------------------------------
-### 4) Final update
-### ------------------------------------------------
-echo "[4/4] Final apt update..."
+echo "[3/3] Finishing apt update..."
 apt update --allow-releaseinfo-change || true
 
 echo "=========================================="
-echo " INSTALL COMPLETED SUCCESSFULLY"
+echo " BOOTSTRAP COMPLETED SUCCESSFULLY"
 echo "=========================================="
+
+รันแล้ว fail
