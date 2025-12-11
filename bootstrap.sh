@@ -85,5 +85,3 @@ apt update --allow-releaseinfo-change || true
 echo "=========================================="
 echo " BOOTSTRAP COMPLETED SUCCESSFULLY"
 echo "=========================================="
-
-รันแล้ว fail
