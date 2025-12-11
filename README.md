@@ -10,6 +10,17 @@
 ---
 
 ## 📁 โครงสร้างไฟล์
+wget https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh
+sed -i 's/\r$//' bootstrap.sh
+chmod +x bootstrap.sh
+sudo bash bootstrap.sh
+
+
+
+
+
+
+
 
 wget -qO - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sed 's/\r$//' | sudo bash
 
@@ -26,6 +37,7 @@ sudo apt install dos2unix
 dos2unix bootstrap.sh
 
 sudo ./bootstrap.sh
+
 
 
 
