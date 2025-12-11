@@ -71,8 +71,7 @@ chmod +x "$NVIDIA_RUN"
 
 echo "→ Running installer (silent mode)..."
 # รันตัวติดตั้ง (ไม่ใช้ sudo)
-sh "$NVIDIA_RUN" --silent --no-nouveau-check --no-cc-version-check
-
+sh "$NVIDIA_RUN" --silent --no-nouveau-check --no-cc-version-check --no-x-check
 echo "✔ NVIDIA driver installed successfully."
 
 
@@ -85,3 +84,4 @@ apt update --allow-releaseinfo-change || true
 echo "=========================================="
 echo " BOOTSTRAP COMPLETED SUCCESSFULLY"
 echo "=========================================="
+
