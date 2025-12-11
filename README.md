@@ -21,12 +21,11 @@ wget https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/m
 
 chmod +x bootstrap.sh
 
-sudo ./bootstrap.sh
-
 sudo apt install dos2unix
 
 dos2unix bootstrap.sh
 
 sudo ./bootstrap.sh
+
 
 
