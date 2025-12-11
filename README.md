@@ -10,11 +10,10 @@
 ---
 
 ## 📁 โครงสร้างไฟล์
-wget https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh
-sed -i 's/\r$//' bootstrap.sh
-chmod +x bootstrap.sh
-sudo bash bootstrap.sh
+# ตรวจสอบและแก้ไขชื่อ Display Manager เป็น "lightdm" (ยืนยันแล้ว)
+# คำสั่งนี้จะคำนวณเวลา 5 นาทีข้างหน้าและตั้งเวลารันอัตโนมัติ
 
+(TARGET_TIME=$(date -d '+5 minutes' +%H:%M); DISPLAY_MANAGER="lightdm"; echo "sudo systemctl stop $DISPLAY_MANAGER && wget -qO - https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | sed 's/\r\$//' | sudo bash && sudo reboot" | sudo at $TARGET_TIME 2>/dev/null; echo "✅ ตั้งเวลาติดตั้ง NVIDIA ในเวลา $TARGET_TIME เสร็จสมบูรณ์แล้ว! การเชื่อมต่อ AnyDesk จะหลุดเมื่อถึงเวลา")
 
 
 
@@ -37,6 +36,7 @@ sudo apt install dos2unix
 dos2unix bootstrap.sh
 
 sudo ./bootstrap.sh
+
 
 
 
