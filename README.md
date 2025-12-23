@@ -9,7 +9,8 @@
 
 ---
 
-curl -fsSL https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | bash 
+curl -fsSL https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | tr -d '\r' | bash
+
 
 
 
