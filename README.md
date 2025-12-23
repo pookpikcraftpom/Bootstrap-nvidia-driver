@@ -9,7 +9,7 @@
 
 ---
 
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh)"
+curl -fsSL https://raw.githubusercontent.com/pookpikcraftpom/Bootstrap-nvidia-driver/main/bootstrap.sh | bash 
 
 
 
