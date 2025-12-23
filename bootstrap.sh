@@ -21,14 +21,14 @@ $SUDO apt-get update --allow-releaseinfo-change >"$APT_LOG" 2>&1 || true
 if grep -q "EXPKEYSIG $ROS_KEY_ID" "$APT_LOG"; then
   echo "fix ros key"
   $SUDO apt-key del "$ROS_KEY_ID" || true
-  curl -fsSL "$ROS_KEY_URL" -o "$WORKDIR/ros.key"
+  curl -fL --progress-bar "$ROS_KEY_URL" -o "$WORKDIR/ros.key"
   $SUDO install -m 0644 "$WORKDIR/ros.key" "$ROS_KEY_PATH"
   CODENAME="$(lsb_release -sc)"
-  echo "deb [signed-by=$ROS_KEY_PATH] http://packages.ros.org/ros/ubuntu $CODENAME main" | $SUDO tee "$ROS_LIST_FILE"
+  echo "deb [signed-by=$ROS_KEY_PATH] http://packages.ros.org/ros/ubuntu $CODENAME main" | $SUDO tee "$ROS_LIST_FILE" >/dev/null
 fi
 
 echo "[2/3] download nvidia driver"
-curl -fL "$DRIVER_URL" -o "$NVIDIA_RUN"
+curl -fL --progress-bar "$DRIVER_URL" -o "$NVIDIA_RUN"
 chmod +x "$NVIDIA_RUN"
 
 echo "install nvidia driver"
