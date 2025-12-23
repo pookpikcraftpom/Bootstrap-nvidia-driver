@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euo 
 
 log() { printf '%s\n' "$*"; }
 
@@ -101,3 +101,4 @@ log "=========================================="
 if [[ $APT_RC -ne 0 ]]; then
   log "Note: initial apt update returned code $APT_RC. See log: $APT_LOG"
 fi
+
